@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+{% load static %}
+{% load crispy_forms_tags %}
+<html>
+<head>
+	<meta charset="utf-8">
+	<title></title>
+</head>
+<body> 
+	
+<form method="POST" id="blog_form" data-url = "{% url 'Blog:Postblog' %}" user="{% url 'Blog:landing' user %}">
+	{% csrf_token %}
+	<input type="text" id="user" value="{{user}}" hidden>
+	{{form.category|as_crispy_field}}
+	{{form.title|as_crispy_field}}
+	{{form.content|as_crispy_field}}
+	<input id="form_submit" class="btn btn-primary" type="submit" value="Submit" hidden>
+</form>
+</body>
+</html>

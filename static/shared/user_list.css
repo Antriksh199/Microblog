@@ -1,0 +1,38 @@
+
+	@keyframes fadeInOut {
+	0% { opacity:1; }
+	100% { opacity:0; } 
+	}
+
+		@-webkit-keyframes fadeInOut {
+	0% { opacity: 1; }
+	100% { opacity:0; } 
+	}
+
+
+
+		.columns{
+			display: flex;
+			border: 1px solid black;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.interests{
+			display: flex;
+			border: 1px solid black;
+			align-items: left;
+		}
+
+		#messages{
+			margin-top: 2px;
+			z-index: 10;
+			position: fixed;
+			animation-name: fadeInOut;
+			animation: fadeInOut 3s;
+
+		}
+.fadeInOut {
+            -webkit-animation-name: fadeInOut;
+            animation-name: fadeInOut;
+         }

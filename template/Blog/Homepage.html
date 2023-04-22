@@ -1,0 +1,144 @@
+{% extends '../index.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+<!DOCTYPE html>
+{% block content %}
+<html>
+<head>
+	<meta charset="utf-8">
+	<title></title>
+	<link rel="stylesheet" href="{% static 'Blog/homepage.css' %}" > 
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> 
+<style>
+
+</style>
+</head>
+<body>
+	<div class="size">
+	{% if messages %}
+	{% for msg in messages %}
+	<div class="alert alert-success alert-dismissible fade show" role="alert" id="messages">
+		{{msg}}
+  		<button type="button" class="close float-end custom" data-dismiss="alert" aria-label="Close" onclick="RemoveMessage()">
+		<span aria-hidden="true">&times;</span>
+  		</button>
+  	</div>
+	{% endfor %}
+	{% endif %}
+	
+
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModal">
+<div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit your blog !</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div id="edit-modal-body" class="modal-body">
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button id="edit_blog" type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h1>Welcome {{user.first_name}}</h1>
+<br>
+{% if blog %}
+<div class="blogs">
+	<h2>Check your posted Blogs here</h2>
+	<br>
+	<div class="row rows">
+		<div class="col-md-1 columns"><b>S.No</b></div>
+		<div class="col-md-3 columns"><b>Category</b></div>
+		<div class="col-md-4 columns"><b>Title</b></div>
+		<div class="col-md-2 columns"><b>Created Date</b></div>
+		<div class="col-md-2 columns"><b>Modified Date</b></div>
+	</div>
+{% for b in blog %}
+<div class="row rows" style="border-top:0px;">
+		<div class="col-md-1 columns">{{forloop.counter}}</div>
+		<div class="col-md-3 columns">{{b.category}}</div>
+		<div class="col-md-4 columns" ><a class="edit_form" id='{{b.id}}' href="#" hit-url="{% url 'Blog:EditBlog' b.pk %}">{{b.title}}</a></div>
+		<div class="col-md-2 columns">{{b.created_date|date:'d-M-Y H:i '}}</div>
+		<div class="col-md-2 columns">{{b.modified_date|date:'d-M-Y H:i'}}</div>
+	</div>
+	{% endfor %}
+	</div>
+{% else %}
+<h1>You have not posted anything yet. Create your first Blog</h1>
+{% endif %}
+
+</div>
+<script>
+		function RemoveMessage(){
+		const element = document.getElementById("messages");
+		element.remove();
+}
+
+
+$('#edit_blog').click(function(e){
+	e.preventDefault();
+	var form = $('#edit_blog_form');
+	var url = $('#edit_blog_form').attr("data-url");
+	console.log(url);
+	$.ajax({
+		type:"POST",
+		data : {
+			//category : $('#form_category').val(),
+			//content : $('#form_content').val(),
+			csrfmiddlewaretoken : $('input[name=csrfmiddlewaretoken]').val(),
+			form : form.serialize()
+		},
+		dataType: 'Html',
+		url : url,
+		success : function(data)
+		{
+      var error = document.getElementById("error_1_id_category");
+      var error1 = $("#error_1_id_category");
+      console.log(data);
+      //console.log($("data").find("#error_1_id_category").length);
+      //console.log(("data").find("#error_1_id_content").length);
+      if (($(data).find("#error_1_id_category").length > 0) || ($(data).find("#error_1_id_title").length > 0) || ($(data).find("#error_1_id_content").length > 0) ){
+      	$('#edit-modal-body').html(data);
+      }
+      else
+      {
+      	$("html").html(data);
+      	location.reload();
+      	console.log('else');
+      	console.log(data);
+      }
+
+		}
+});
+});
+
+
+
+$('.edit_form').click(function(e){
+	var url = $(this).attr("hit-url");
+	console.log(url);
+$.ajax({
+			type : "GET",
+			url : url,
+		success: function(data){
+    	console.log(data);
+      $('#edit-modal-body').html(data);
+      $('#editModal').modal('show');
+  },
+  error: function(data){
+      alert('error; '+ eval(error));
+      }
+	});
+});
+
+
+</script>
+</body>
+</html>
+{% endblock content %}

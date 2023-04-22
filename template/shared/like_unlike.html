@@ -1,0 +1,8 @@
+{% if status == 200 %}
+<div id="text" class="alert alert-success alert-dismissible fade show" status="{{status}}" pk="{{pk}}">{{text}}
+	<span id="likes_count" hidden>{{likes}}</span>
+</div>
+{% else %}
+<div id="text" class="alert alert-danger alert-dismissible fade show" status="{{status}}" pk="{{pk}}">{{text}}
+<span id="likes_count" hidden>{{likes}}</span></div>
+{% endif %}

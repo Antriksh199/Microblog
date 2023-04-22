@@ -1,0 +1,44 @@
+{% extends '../index.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="{% static 'User/login.css' %}">
+	<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+</head>
+<body>
+	<div class="container">
+
+	{% if messages %}
+	{% for msg in messages %}
+	<div class="alert alert-danger alert-dismissible fade show" role="alert" id="messages">
+		{{msg}}
+  		<button type="button" class="close float-end custom" data-dismiss="alert" aria-label="Close" onclick="RemoveMessage()">
+		<span aria-hidden="true">&times;</span>
+  		</button>
+		</div>
+	{% endfor %}
+	{% endif %}
+		<h1>User Login!</h1>
+		<br>
+		<form method="POST">
+			{% csrf_token %}
+			{{form|crispy}}
+			<input class="btn btn-primary" type="submit" value="Login">
+    <input class="btn btn-secondary" type="reset" id="resetBtn" value="Reset" onClick="Reset()">
+		</form>
+	</div>
+<script>
+	function RemoveMessage(){
+		const element = document.getElementById("messages");
+		element.remove();
+	}
+</script>
+</body>
+</html>
+{% endblock content %}

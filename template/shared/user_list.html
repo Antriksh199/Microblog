@@ -1,0 +1,145 @@
+{% extends '../index.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title></title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> 
+	<link rel="stylesheet" href="{% static 'shared/user_list.css' %}" > 
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+</head>
+<body>
+{% if user %}
+<div class="container">
+	<div id="messages" class="float-end fadeInOut">
+	</div>
+	<h1>These are all our users !</h1>
+	<br>
+	<br>
+<div class="row">
+	<div class="col-md-1 columns"><b>S.No</b></div>
+	<div class="col-md-1 columns"><b>Username</b></div>
+	<div class="col-md-2 columns"><b>Name</b></div>
+	<div class="col-md-2 columns"><b>Email</b></div>
+	<div class="col-md-3 columns"><b>Interests</b></div>
+	<div class="col-md-1 columns"><b>Follow</b></div>
+</div>
+{% for u in users %}
+<div class="row">
+	<div class="col-md-1 columns">{{forloop.counter}}</div>
+	<div class="col-md-1 columns">{{u.user.username}}</div>
+	<div class="col-md-2 columns">{{u.first_name}}&nbsp;{{u.last_name}}</div>
+	<div class="col-md-2 columns">{{u.email}}</div>
+	<div class="col-md-3 interests">
+		<ul class="fa-ul">
+		{% for x in u.get_interest_list %}
+		<li><span class="fa-li"><i class="fa-solid fa-check-square"></i></span>{{x}}</li>
+		{% endfor %}
+	</ul>
+	</div>
+	<div class="col-md-1 columns">
+		<ul class="fa-ul">
+		{% if u.pk not in follows %}
+	<li><span id="{{u.pk}}" class="fa-li" title="Follow"><i onclick="ShowAlert({{u.pk}})" class="fa-sharp fa-solid fa-user-plus fa-lg"></i></span></li>
+		{% else %}
+		<li><span  id="{{u.pk}}" class="fa-li" title="Unfollow" ><i class="fa-solid fa-user-minus fa-lg" onclick="ShowAlertUnfollow({{u.pk}})"></i></span></li>
+		{% endif %}
+	</ul>
+	</div>
+</div>
+{% endfor %}
+</div>
+{% endif %}
+<script type="text/javascript">
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+function ShowAlert(id){
+		console.log('clicked');
+		let csrf = getCookie('csrftoken');
+		console.log(csrf);
+		var url = '/shared/ajax/follow/'+id;
+		console.log(url);
+		$.ajax({
+			url: url,
+			type: "POST",
+			headers: {'X-CSRFToken': csrf},
+        	mode: 'same-origin',
+			data : {
+				'pk': id
+			},
+			dataType : "Html",
+			success : function(data){
+				$('#messages').html(data);
+				//var data = $(data).filter('#text').html();
+				var data1 = $(data).attr('status');
+				console.log(data1);
+				if (data1=='200'){
+					var pk = $(data).attr('pk');
+					console.log(pk);
+					var element = '#'+(pk);
+					$(element).html('<i class="fa-solid fa-user-minus fa-lg" onclick="ShowAlertUnfollow('+pk+')"></i></span></li>');
+					
+				}
+
+				const TimeOut = setTimeout(delay,1000);
+			}
+		});
+	}
+
+function ShowAlertUnfollow(id){
+		console.log('clicked-unfollow');
+		let csrf = getCookie('csrftoken');
+		console.log(csrf);
+		var url = '/shared/ajax/unfollow/'+id;
+		console.log(url);
+		$.ajax({
+			url: url,
+			type: "POST",
+			headers: {'X-CSRFToken': csrf},
+        	mode: 'same-origin',
+			data : {
+				'pk': id
+			},
+			dataType : "Html",
+			success : function(data){
+				$('#messages').html(data);
+				$('#messages').html(data);
+				//var data = $(data).filter('#text').html();
+				var data1 = $(data).attr('status');
+				console.log(data1);
+				if (data1=='200'){
+					var pk = $(data).attr('pk');
+					console.log(pk);
+					var element = '#'+(pk);
+					$(element).html('<i class="fa-solid fa-user-plus fa-lg" onclick="ShowAlertFollow('+pk+')"></i></span></li>');
+
+				}
+
+				const TimeOut = setTimeout(delay,1000);
+			}
+		});
+
+}
+
+function delay(){
+	$('#text').fadeOut(2000);
+}
+</script>
+</body>
+</html>
+{% endblock content %}

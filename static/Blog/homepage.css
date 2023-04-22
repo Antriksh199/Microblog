@@ -1,0 +1,40 @@
+.custom{
+	border: 0px;
+	background-color: inherit;
+	margin-right: 8px;
+}
+
+.size{
+	width: 100%;
+	height: 100%;
+}
+
+#table{
+
+	border-collapse: collapse;
+	border: 1px solid black;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.blogs{
+	text-align: center;
+	vertical-align: middle;
+	width: 75%;
+	margin-left: 15%;
+}
+
+.rows{
+	height : 10;
+	border: 1px solid black;
+	margin : 0px;
+}
+
+.columns{
+	border-left: 1px solid black;
+	border-right: 1px solid black;
+	text-align: center;
+	vertical-align: middle;
+	padding: 0px;
+	margin: 0px;
+}

@@ -1,0 +1,10 @@
+.errors{
+	font-size: 0.875em;
+	color: #dc3545;
+}
+
+.custom{
+	border: 0px;
+	background-color: inherit;
+	margin-right: 8px;
+}

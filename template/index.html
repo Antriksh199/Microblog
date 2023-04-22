@@ -1,0 +1,163 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Home</title>
+	  <script src="https://kit.fontawesome.com/409df98744.js" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+	  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> 
+	<link href="{% static 'index.css' %}" rel="stylesheet">
+	<script src="{% static 'index.js' %}"></script> 
+</head>
+<body>
+  <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="editModal">
+<div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Post new blog !</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div id="modal-body" class="modal-body">
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button id="post_blog" type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+	<nav class="navbar navbar-expand navbar-fixed-top myNav" style="margin-bottom: 0px; color: white;">
+  <a class="navbar-brand" href="#">
+  <button  style='border:0px; background: inherit' class="myButton"><i class="fa-sharp fa-solid fa-bars" onclick="Toggle()" style="color: #fcfcfd;"></i></button></a>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav">
+      {% if not user.is_authenticated %}
+      <li class="nav-item">
+        <a class="nav-link font" href="{% url 'User:signup' %}">Signup</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link font" href="{% url 'User:Login_view' %}">Login</a>
+      </li>
+      {% endif %}
+      {% if user.is_authenticated  %}
+      <li class="nav-item">
+        <a class="nav-link font" id="an" href='#' hit-url="{% url 'Blog:Postblog' %}">New Blog</a>
+      </li>
+      
+      <li class="nav-item">
+        <a class="nav-link font" href="{% url 'Blog:landing' user.pk %}" tabindex="-1">Home</a>
+      </li>
+      {% endif %}
+    </ul>
+  </div>
+  {% if user.is_authenticated %}
+  <div class="dropdown">
+    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+      {{user.username|upper}}&nbsp;
+    <i class="fa-solid fa-user fa-lg"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-sm-end" data-bs-display="static" aria-expanded="false" aria-labelledby="dropdownMenu1"  style="width:5px;">
+    <li><a class="dropdown-item" href="{% url 'User:EditProfile' user.pk %}">Edit Profile</a></li>
+    <li><a class="dropdown-item" href="{% url 'User:Logout_view' %}">Logout</a></li>
+  </ul>
+  </div>
+  {% endif %}
+</nav>
+<div class="wrapper">
+<div id="sidenav" class="sidenav" hidden="false">
+  <nav>
+    <ul class="nav flex-column">
+      {% if user.is_authenticated %}
+  <li class="nav-item">
+    <a class="nav-link font" href="{% url 'shared:UserList' %}">Users</a>
+  </li>
+  {% endif %}
+  <li class="nav-item">
+    <a class="nav-link font" href="#">Report Issue</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link font" href="#">Contact Us</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link font" href="#">Facebbok</a>
+  </li>
+    <li class="nav-item">
+    <a class="nav-link font" href="#">Instagram</a>
+  </li>
+    <li class="nav-item">
+    <a class="nav-link font" href="#">LinkedIn</a>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="content" id="content">
+      {% block content %}
+    {% endblock content %}
+</div>
+</div>
+<script>
+$('#post_blog').click(function(e){
+  e.preventDefault();
+  var form = $('#blog_form');
+  var url = $('#blog_form').attr("data-url");
+  const user = $('#blog_form').attr("user");
+  //const user1 = $('#user').val();
+  console.log(url);
+  $.ajax({
+    type:"POST",
+    data : {
+      //category : $('#form_category').val(),
+      //content : $('#form_content').val(),
+      csrfmiddlewaretoken : $('input[name=csrfmiddlewaretoken]').val(),
+      form : form.serialize()
+    },
+    dataType: 'Html',
+    url : url,
+    success : function(data)
+    {
+      var error = document.getElementById("error_1_id_category");
+      var error1 = $("#error_1_id_category");
+      console.log(data);
+      //console.log($("data").find("#error_1_id_category").length);
+      //console.log(("data").find("#error_1_id_content").length);
+      if (($(data).find("#error_1_id_category").length > 0) || ($(data).find("#error_1_id_title").length > 0) || ($(data).find("#error_1_id_content").length > 0) ){
+        $('#modal-body').html(data);
+      }
+      else
+      {
+        //$("html").html(data);
+        //location.reload();
+        window.location.href = user;
+        console.log('else');
+        console.log(data);
+      }
+
+    }
+});
+});
+$('#an').click(function(e){
+  var url = $(this).attr("hit-url");
+  const user = $('#blog_form').attr("user");
+  const user1 = $('#user').val();
+  console.log(user,user1);
+$.ajax({
+      type : "GET",
+      url : url,
+    success: function(data){
+            console.log(data);
+      $('#modal-body').html(data);
+      $('#myModal').modal('show');
+
+  },
+  error: function(data){
+      alert('error; '+ eval(error));
+      }
+  });
+});
+</script>
+</body>
+</html>
