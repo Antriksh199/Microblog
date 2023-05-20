@@ -62,7 +62,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build
+    needs: security-check
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python 3.11
